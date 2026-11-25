@@ -21,6 +21,7 @@ That key is Firefox metadata; the warning is harmless.
 
 Download the signed `.xpi` from the [Releases](https://github.com/RedjonPrengzi/jira-diff-viewer/releases) page, then install it via `about:addons` → gear menu → "Install Add-on From File".
 Reload any already-open Jira tab after installing.
+From version 1.0.1 on, Firefox updates the extension by itself when a new release comes out — no reinstalling, no manual checks.
 
 Quick try from source instead, but gone after a browser restart:
 
@@ -58,6 +59,14 @@ The `test/` directory is only needed for the test suite.
 
 All selectors and constants live in `JDV.CONFIG` at the top of `content.js`.
 When Atlassian changes the DOM, the fix is usually a one-line patch there.
+
+## Releasing (maintainer)
+
+1. Bump `version` in `manifest.json`.
+2. Run `npx web-ext sign --channel=unlisted --api-key=YOUR_KEY --api-secret=YOUR_SECRET`; the signed `.xpi` lands in `web-ext-artifacts/`.
+3. Create a GitHub release `vX.Y.Z` with that xpi attached.
+4. Add the version and its asset URL as a new entry in `updates.json`, push.
+5. Installed Firefox copies pick the update up within about a day, or immediately via `about:addons` → gear menu → "Check for Updates".
 
 ## Tests
 

@@ -1,0 +1,12 @@
+{
+  "addons": {
+    "jira-diff-viewer@rprengzi": {
+      "updates": [
+        {
+          "version": "1.0.1",
+          "update_link": "https://github.com/RedjonPrengzi/jira-diff-viewer/releases/download/v1.0.1/jira-diff-viewer-1.0.1.xpi"
+        }
+      ]
+    }
+  }
+}

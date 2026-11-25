@@ -3,6 +3,7 @@
 module.exports = {
   ignoreFiles: [
     'web-ext-config.cjs',
+    'updates.json',
     'test',
     'test/**',
     'web-ext-artifacts/**',

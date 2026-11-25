@@ -1,12 +1,13 @@
 {
   "manifest_version": 3,
   "name": "Jira Diff Viewer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Replaces old/new history rows in the Jira History tab with highlighted inline diffs.",
   "browser_specific_settings": {
     "gecko": {
       "id": "jira-diff-viewer@rprengzi",
       "strict_min_version": "109.0",
+      "update_url": "https://redjonprengzi.github.io/jira-diff-viewer/updates.json",
       "data_collection_permissions": {
         "required": ["none"]
       }
