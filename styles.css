@@ -1,5 +1,8 @@
 /* Jira diff viewer - scoped styles. Rules on jdv- prefixed classes only so
-   Jira's CSS does not leak in and ours does not leak out. */
+   Jira's CSS does not leak in and ours does not leak out.
+   Colors reference Jira's design tokens so the diff follows the user's
+   theme; the hex fallbacks are the original light-theme values and apply
+   where tokens are absent (older Jira, original theme). */
 
 .jdv-root {
   display: block;
@@ -7,30 +10,30 @@
   overflow-wrap: break-word;
   padding: 8px 12px;
   margin: 4px 0;
-  border: 1px solid #dfe1e6;
+  border: 1px solid var(--ds-border, #dfe1e6);
   border-radius: 3px;
-  background: #fafbfc;
-  color: #172b4d;
+  background: var(--ds-background-neutral, #fafbfc);
+  color: var(--ds-text, #172b4d);
 }
 
 .jdv-add {
-  background: #e3fcef;
-  color: #006644;
+  background: var(--ds-background-accent-green-subtlest, #e3fcef);
+  color: var(--ds-text-accent-green, #006644);
 }
 
 .jdv-del {
-  background: #ffebe6;
-  color: #ae2e24;
+  background: var(--ds-background-accent-red-subtlest, #ffebe6);
+  color: var(--ds-text-accent-red, #ae2e24);
 }
 
 .jdv-collapsed {
   display: inline-block;
   margin: 0 2px;
   padding: 0 6px;
-  border: 1px solid #dfe1e6;
+  border: 1px solid var(--ds-border, #dfe1e6);
   border-radius: 3px;
-  background: #f4f5f7;
-  color: #6b778c;
+  background: var(--ds-background-neutral, #f4f5f7);
+  color: var(--ds-text-subtle, #6b778c);
   font-family: inherit;
   font-size: 11px;
   line-height: 18px;
@@ -39,31 +42,33 @@
 }
 
 .jdv-toggle {
+  position: absolute;
+  left: 0;
+  bottom: 6px;
   display: inline-block;
-  margin-top: 6px;
   padding: 1px 8px;
-  border: 1px solid #dfe1e6;
+  border: 1px solid var(--ds-border, #dfe1e6);
   border-radius: 3px;
-  background: #fff;
-  color: #6b778c;
+  background: var(--ds-background-neutral, #fff);
+  color: var(--ds-text-subtle, #6b778c);
   font-family: inherit;
   font-size: 12px;
   cursor: pointer;
 }
 
 .jdv-toggle:hover {
-  background: #f4f5f7;
-  color: #172b4d;
+  background: var(--ds-background-neutral-hovered, #f4f5f7);
+  color: var(--ds-text, #172b4d);
 }
 
 .jdv-collapsed:focus-visible,
 .jdv-toggle:focus-visible {
-  outline: 2px solid #0052cc;
+  outline: 2px solid var(--ds-border-focused, #0052cc);
   outline-offset: 1px;
 }
 
 .jdv-note {
   margin-right: 6px;
-  color: #6b778c;
+  color: var(--ds-text-subtle, #6b778c);
   font-style: italic;
 }

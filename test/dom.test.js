@@ -15,7 +15,7 @@ const doms = [];
 
 function load(bodyHtml, opts) {
   opts = opts || {};
-  const dom = new JSDOM(`<!doctype html><html><body>${bodyHtml}</body></html>`, {
+  const dom = new JSDOM(`<!doctype html><html${opts.lang ? ' lang="' + opts.lang + '"' : ''}><body>${bodyHtml}</body></html>`, {
     runScripts: 'outside-only',
     url: 'https://tenant.atlassian.net/browse/TEST-1'
   });
@@ -104,12 +104,12 @@ async function main() {
   });
 
   await test('long equal run collapses and expands on click', () => {
-    const base = 'x'.repeat(350);
+    const base = 'x'.repeat(650);
     const { doc } = load(item(row(base + ' BEFORE', base + ' AFTER')));
     const btn = doc.querySelector('.jdv-collapsed');
     assert.ok(btn, 'collapsed expander exists');
-    // 'x'*350 + the shared space is one equal run of 351 chars
-    assert.strictEqual(btn.textContent, '351 unchanged characters');
+    // 'x'*650 + the shared space is one equal run of 651 chars
+    assert.strictEqual(btn.textContent, '651 unchanged characters');
     btn.click();
     assert.strictEqual(doc.querySelector('.jdv-collapsed'), null);
     assert.ok(doc.querySelector('.jdv-root').textContent.includes(base));
@@ -326,7 +326,7 @@ async function main() {
   });
 
   await test('own UI clicks (expand/toggle) do not trigger observer rescans', async () => {
-    const base = 'q'.repeat(350);
+    const base = 'q'.repeat(650);
     const { doc, JDV } = load(item(row(base + ' OLD', base + ' NEW')));
     let scans = 0;
     const origScan = JDV.scan;
@@ -439,7 +439,7 @@ async function main() {
   });
 
   await test('identical values over threshold render as plain text', () => {
-    const text = 'y'.repeat(400);
+    const text = 'y'.repeat(700);
     const { doc } = load(item(row(text, text)));
     const rootEl = doc.querySelector('.jdv-root');
     assert.strictEqual(rootEl.textContent, text);
@@ -642,6 +642,28 @@ async function main() {
     };
     assert.strictEqual(without('.jdv-del'), 'alpha NEW omega');
     assert.strictEqual(without('.jdv-add'), 'alpha OLD omega');
+  });
+
+
+  await test('row gets positioning context and padding for the absolute toggle', () => {
+    const { doc } = load(item(row('pos OLD value', 'pos NEW value')));
+    const r = doc.querySelector('.valuerow');
+    assert.strictEqual(r.style.position, 'relative');
+    assert.strictEqual(r.style.paddingBottom, '34px');
+    assert.strictEqual(r.getAttribute('data-jdv-row-position'), '');
+    assert.strictEqual(r.getAttribute('data-jdv-row-padding'), '');
+  });
+
+  await test('german interface renders german UI strings', () => {
+    const filler = 'x'.repeat(650);
+    const { doc } = load(item(row(filler + ' BEFORE', filler + ' AFTER') + row('a  b', 'a b')), { lang: 'de' });
+    const rows = doc.querySelectorAll('.valuerow');
+    const toggle = rows[0].querySelector('.jdv-toggle');
+    assert.strictEqual(toggle.textContent, 'Original anzeigen');
+    assert.strictEqual(rows[0].querySelector('.jdv-collapsed').textContent, '651 unveränderte Zeichen');
+    toggle.click();
+    assert.strictEqual(toggle.textContent, 'Diff anzeigen');
+    assert.strictEqual(rows[1].querySelector('.jdv-note').textContent, 'nur Leerzeichen geändert');
   });
 
   console.log(`\n${passed} passed, ${failed} failed`);

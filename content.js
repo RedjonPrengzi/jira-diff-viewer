@@ -18,7 +18,7 @@
     // 'nonassistive-x'.
     a11yTextSelector: 'svg,[hidden],[aria-hidden="true"]',
     valueRowChildCount: 3,
-    collapseThreshold: JDV.COLLAPSE_THRESHOLD != null ? JDV.COLLAPSE_THRESHOLD : 300,
+    collapseThreshold: JDV.COLLAPSE_THRESHOLD,
     processedAttr: 'data-diffed',
     debounceMs: 10,
     // A middle cell with text is an arrow only if it consists of arrow-ish
@@ -47,6 +47,28 @@
   // Per-row view state; keyed by element so originals can be restored exactly.
   // Kept on JDV so a content.js re-evaluation does not strand hidden rows.
   const rowState = JDV._rowState = JDV._rowState || new WeakMap();
+
+  // UI strings follow the Jira interface language when we can tell it: the
+  // html lang attribute first (Jira renders the user's locale there), the
+  // browser language as fallback. Anything unrecognized stays English.
+  const STRINGS = {
+    en: {
+      showOriginal: 'Show original',
+      showDiff: 'Show diff',
+      unchanged: 'unchanged characters',
+      whitespaceOnly: 'whitespace-only change'
+    },
+    de: {
+      showOriginal: 'Original anzeigen',
+      showDiff: 'Diff anzeigen',
+      unchanged: 'unveränderte Zeichen',
+      whitespaceOnly: 'nur Leerzeichen geändert'
+    }
+  };
+
+  // Resolved once at load: the interface language cannot change mid-page.
+  const lang = (document.documentElement.lang || navigator.language || '').toLowerCase();
+  const strings = STRINGS[lang.indexOf('de') === 0 ? 'de' : 'en'];
 
   // The arrow cell is either an icon cell with no visible text (svg/img/canvas
   // or role="img" inside it, or itself one), an empty leaf element (Jira Cloud
@@ -194,8 +216,7 @@
     // The public API enforces the same contract as detection.
     if (!isArrowCell(row.children[1])) return;
 
-    // Compute the diff and build replacement nodes before mutating the row so
-    // any error (e.g. missing diff engine) leaves Jira's DOM untouched.
+    // Build everything before mutating: a failure must leave Jira's DOM untouched.
     const doc = row.ownerDocument;
     const kids = [row.children[0], row.children[1], row.children[2]];
     const oldText = kids[0].textContent;
@@ -212,20 +233,21 @@
     const toggle = doc.createElement('button');
     toggle.type = 'button';
     toggle.className = CLS.toggle;
-    toggle.textContent = 'Show original';
+    toggle.textContent = strings.showOriginal;
     toggle.addEventListener('click', () => toggleView(row));
 
-    // Record inline displays before hiding so the toggle and rollback restore
-    // exactly. Original children stay in the DOM untouched; Jira's React holds
-    // references to these nodes. The texts let later scans detect drift.
-    // A row still carrying .jdv- artifacts is a stateless survivor: its kids
-    // are already hidden, so a 'none' read here is our own hiding - record ''.
+    // Record displays before hiding. The originals stay in the DOM because
+    // React holds references to these nodes; the texts detect drift later.
+    // A row still carrying .jdv- artifacts is a stateless survivor: a 'none'
+    // read here is our own hiding - record ''.
     const hasArtifacts = row.querySelector(OWN_SELECTOR) !== null;
     const state = {
       kids: kids,
       childDisplay: kids.map(k => hasArtifacts && k.style.display === 'none'
         ? '' : k.style.display),
       rowDisplay: row.style.display,
+      rowPosition: row.style.position,
+      rowPaddingBottom: row.style.paddingBottom,
       oldText: oldText,
       newText: newText,
       root: rootEl,
@@ -240,19 +262,22 @@
     // unprocessRow restore exactly even with no state.
     row.setAttribute('data-jdv-kid-display', JSON.stringify(state.childDisplay));
     row.setAttribute('data-jdv-row-display', state.rowDisplay);
+    row.setAttribute('data-jdv-row-position', state.rowPosition);
+    row.setAttribute('data-jdv-row-padding', state.rowPaddingBottom);
     kids.forEach(k => { k.style.display = 'none'; });
     row.style.display = 'block';
+    // The toggle is absolutely positioned at the row's bottom-left: any visible
+    // in-flow child of the row would participate in Jira's column layout for
+    // the original view and render squeezed. Padding reserves its space.
+    row.style.position = 'relative';
+    row.style.paddingBottom = '34px';
     row.appendChild(rootEl);
     row.appendChild(toggle);
   };
 
-  // Full rollback of processRow: restores recorded inline displays, drops our
-  // artifacts, and clears the flag so a later scan can redo the row.
-  // Displays are read from rowState, then the data attributes processRow
-  // mirrors them into - a row's DOM can outlive its WeakMap entry via
-  // cloneNode or an ancestor innerHTML round-trip - and failing both, only
-  // when our artifacts prove we touched the row, every non-artifact child
-  // stuck at display:none is unhidden.
+  // Full rollback of processRow. Display state comes from rowState, then
+  // from the mirrored data attributes (the DOM can outlive the WeakMap entry
+  // via cloneNode or innerHTML round-trips), then from a last-resort heuristic.
   function unprocessRow(row) {
     const state = rowState.get(row);
     if (state) {
@@ -262,7 +287,8 @@
         state.kids[i].style.display = state.childDisplay[i];
       }
       row.style.display = state.rowDisplay;
-      // remove() works wherever the node ended up, including a sibling.
+      row.style.position = state.rowPosition;
+      row.style.paddingBottom = state.rowPaddingBottom;
       if (state.root) state.root.remove();
       if (state.toggle) state.toggle.remove();
     } else {
@@ -279,6 +305,8 @@
           origKids[i].style.display = displays[i];
         }
         row.style.display = row.getAttribute('data-jdv-row-display') || '';
+        row.style.position = row.getAttribute('data-jdv-row-position') || '';
+        row.style.paddingBottom = row.getAttribute('data-jdv-row-padding') || '';
       } else if (row.querySelector(OWN_SELECTOR)) {
         for (const k of origKids) {
           if (k.style.display === 'none') k.style.display = '';
@@ -291,6 +319,8 @@
     row.removeAttribute(CONFIG.processedAttr);
     row.removeAttribute('data-jdv-kid-display');
     row.removeAttribute('data-jdv-row-display');
+    row.removeAttribute('data-jdv-row-position');
+    row.removeAttribute('data-jdv-row-padding');
     rowState.delete(row);
   }
 
@@ -309,7 +339,7 @@
     if (hasChange && allWhitespace) {
       const note = doc.createElement('span');
       note.className = CLS.note;
-      note.textContent = 'whitespace-only change';
+      note.textContent = strings.whitespaceOnly;
       rootEl.appendChild(note);
     }
   }
@@ -324,7 +354,7 @@
       const btn = doc.createElement('button');
       btn.type = 'button';
       btn.className = CLS.collapsed;
-      btn.textContent = seg.text.length + ' unchanged characters';
+      btn.textContent = seg.text.length + ' ' + strings.unchanged;
       const text = seg.text;
       btn.addEventListener('click', () => {
         btn.replaceWith(doc.createTextNode(text));
@@ -342,18 +372,16 @@
       state.root.style.display = 'none';
       state.kids.forEach((k, i) => { k.style.display = state.childDisplay[i]; });
       row.style.display = state.rowDisplay;
-      state.toggle.textContent = 'Show diff';
+      state.toggle.textContent = strings.showDiff;
     } else {
       state.root.style.display = '';
       state.kids.forEach(k => { k.style.display = 'none'; });
       row.style.display = 'block';
-      state.toggle.textContent = 'Show original';
+      state.toggle.textContent = strings.showOriginal;
     }
     state.showingDiff = !state.showingDiff;
   }
 
-  // The display we last wrote on a tracked row or one of its kids; null for
-  // anything untracked.
   function recordedDisplay(el) {
     const state = rowState.get(el);
     if (state) return state.showingDiff ? 'block' : state.rowDisplay;

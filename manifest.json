@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Jira Diff Viewer",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Replaces old/new history rows in the Jira History tab with highlighted inline diffs.",
   "browser_specific_settings": {
     "gecko": {

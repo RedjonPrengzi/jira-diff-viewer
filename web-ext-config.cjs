@@ -6,6 +6,8 @@ module.exports = {
     'updates.json',
     'test',
     'test/**',
+    'docs',
+    'docs/**',
     'web-ext-artifacts/**',
     '*.zip',
     '.gitignore',

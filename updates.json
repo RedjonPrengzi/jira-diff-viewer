@@ -5,6 +5,10 @@
         {
           "version": "1.0.1",
           "update_link": "https://github.com/RedjonPrengzi/jira-diff-viewer/releases/download/v1.0.1/jira-diff-viewer-1.0.1.xpi"
+        },
+        {
+          "version": "1.0.2",
+          "update_link": "https://github.com/RedjonPrengzi/jira-diff-viewer/releases/download/v1.0.2/jira-diff-viewer-1.0.2.xpi"
         }
       ]
     }

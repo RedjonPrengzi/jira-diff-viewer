@@ -17,7 +17,7 @@ require(path.join(root, 'diff.js'));
 
 const JDV = globalThis.JDV;
 assert.ok(JDV, 'diff.js did not populate globalThis.JDV');
-assert.strictEqual(JDV.COLLAPSE_THRESHOLD, 300);
+assert.strictEqual(JDV.COLLAPSE_THRESHOLD, 600);
 assert.strictEqual(typeof JDV.buildSegments, 'function');
 
 let passed = 0;
@@ -73,8 +73,8 @@ test('identical strings produce no ins/del segments', () => {
   assert.ok(!types(segs).includes('collapsed'), 'unexpected collapsed segment');
 });
 
-test('equal run longer than 300 chars becomes collapsed with full text', () => {
-  const filler = 'x'.repeat(400);
+test('equal run longer than 600 chars becomes collapsed with full text', () => {
+  const filler = 'x'.repeat(700);
   const oldText = filler + ' old tail';
   const newText = filler + ' new tail';
   const segs = JDV.buildSegments(oldText, newText);
@@ -84,12 +84,12 @@ test('equal run longer than 300 chars becomes collapsed with full text', () => {
   assert.ok(collapsed[0].text.length > JDV.COLLAPSE_THRESHOLD);
 });
 
-test('equal run of 300 chars or less stays equal', () => {
-  const filler = 'y '.repeat(150);
+test('equal run of 600 chars or less stays equal', () => {
+  const filler = 'y '.repeat(300);
   const segs = JDV.buildSegments(filler + 'a', filler + 'b');
-  assert.ok(!types(segs).includes('collapsed'), '300-char equal run must not collapse');
+  assert.ok(!types(segs).includes('collapsed'), '600-char equal run must not collapse');
   const eq = segs.filter((s) => s.type === 'equal');
-  assert.ok(eq.some((s) => s.text === filler), 'expected equal segment with the 300-char run');
+  assert.ok(eq.some((s) => s.text === filler), 'expected equal segment with the 600-char run');
 });
 
 test('empty to nonempty produces ins segment', () => {
@@ -126,7 +126,7 @@ test('wiki markup tokens diff as plain text without crashing', () => {
 });
 
 test('NaN threshold falls back to default collapse threshold', () => {
-  const filler = 'z'.repeat(350);
+  const filler = 'z'.repeat(650);
   const segs = JDV.buildSegments(filler + ' old', filler + ' new', NaN);
   assert.strictEqual(segs.filter((s) => s.type === 'collapsed').length, 1);
 });

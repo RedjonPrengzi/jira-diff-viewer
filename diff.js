@@ -3,7 +3,7 @@
 
   const JDV = (globalThis.JDV = globalThis.JDV || {});
 
-  JDV.COLLAPSE_THRESHOLD = 300;
+  JDV.COLLAPSE_THRESHOLD = 600;
 
   // The diff runs on tokens, not characters: letter/number/underscore runs,
   // whitespace runs and punctuation runs each become one token. Unicode-aware
