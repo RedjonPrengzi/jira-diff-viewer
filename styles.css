@@ -1,0 +1,69 @@
+/* Jira diff viewer - scoped styles. Rules on jdv- prefixed classes only so
+   Jira's CSS does not leak in and ours does not leak out. */
+
+.jdv-root {
+  display: block;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  padding: 8px 12px;
+  margin: 4px 0;
+  border: 1px solid #dfe1e6;
+  border-radius: 3px;
+  background: #fafbfc;
+  color: #172b4d;
+}
+
+.jdv-add {
+  background: #e3fcef;
+  color: #006644;
+}
+
+.jdv-del {
+  background: #ffebe6;
+  color: #ae2e24;
+}
+
+.jdv-collapsed {
+  display: inline-block;
+  margin: 0 2px;
+  padding: 0 6px;
+  border: 1px solid #dfe1e6;
+  border-radius: 3px;
+  background: #f4f5f7;
+  color: #6b778c;
+  font-family: inherit;
+  font-size: 11px;
+  line-height: 18px;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.jdv-toggle {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 1px 8px;
+  border: 1px solid #dfe1e6;
+  border-radius: 3px;
+  background: #fff;
+  color: #6b778c;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.jdv-toggle:hover {
+  background: #f4f5f7;
+  color: #172b4d;
+}
+
+.jdv-collapsed:focus-visible,
+.jdv-toggle:focus-visible {
+  outline: 2px solid #0052cc;
+  outline-offset: 1px;
+}
+
+.jdv-note {
+  margin-right: 6px;
+  color: #6b778c;
+  font-style: italic;
+}

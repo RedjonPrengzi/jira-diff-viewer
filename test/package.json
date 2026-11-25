@@ -1,0 +1,14 @@
+{
+  "name": "jira-diff-viewer-tests",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Test harness for the Jira Diff Viewer extension (jsdom-based DOM tests).",
+  "scripts": {
+    "test": "node diff.test.js && node dom.test.js && node integration.test.js"
+  },
+  "license": "MIT",
+  "type": "commonjs",
+  "devDependencies": {
+    "jsdom": "^31.0.1"
+  }
+}

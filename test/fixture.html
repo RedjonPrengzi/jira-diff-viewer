@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Jira Diff Viewer — fixture</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; margin: 2rem; color: #172b4d; max-width: 60rem; }
+  h1 { font-size: 1.4rem; }
+  .jdv-caption { font-size: .8rem; color: #6b778c; margin: .25rem 0 1rem; }
+  .jdv-case { border: 1px solid #dfe1e6; border-radius: 6px; padding: 1rem; margin-bottom: 1.5rem; background: #fff; }
+  .jdv-case h2 { font-size: .95rem; margin: 0 0 .25rem; }
+</style>
+</head>
+<body>
+<h1>Jira Diff Viewer — manual verification fixture</h1>
+<p>If the extension works, each matching row below shows a unified inline diff with a "Show original" toggle.
+Rows that should stay untouched are marked.</p>
+
+<!-- Case 1: one-word change in a short sentence -->
+<section class="jdv-case">
+  <h2>Case 1 — one-word change</h2>
+  <p class="jdv-caption">Expect: only "2" → "5" highlighted (red/green), rest plain.</p>
+  <div class="history-item-wrapper">
+    <div data-testid="issue-history.ui.history-items.generic-history-item.history-item" class="ak-history-item">
+      <div class="field-label"><span class="field-name">Description</span> <span class="by-line">updated by Jane Doe, 2 hours ago</span></div>
+      <div class="values-row">
+        <div class="old-value">The health check must respond within 2 seconds of the probe.</div><span class="arrow-icon"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 8h8M9 4l4 4-4 4" stroke="currentColor" fill="none"/></svg></span><div class="new-value">The health check must respond within 5 seconds of the probe.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Case 2: long description, only an ITSM link appended at the end -->
+<section class="jdv-case">
+  <h2>Case 2 — long wiki markup, link appended at end</h2>
+  <p class="jdv-caption">Expect: long unchanged run collapsed behind an expander; the appended ITSM link shown in green at the end.</p>
+  <div data-testid="issue-history.ui.history-items.generic-history-item.history-item" class="generic-history-item">
+    <div class="change-item-header"><span class="field-label">Description</span><span class="timestamp">Yesterday 14:32</span></div>
+    <div class="item-content">
+      <div class="text-diff-row">
+        <div class="prev">h2. Incident summary
+
+*The payment gateway* timed out for *12 minutes* during the nightly batch.
+
+h3. Timeline
+# 02:14 UTC — first alert fired by [Prometheus|http://prometheus.internal/alerts]
+# 02:15 UTC — on-call paged via [PagerDuty|http://pagerduty.internal/incidents/P1234]
+# 02:31 UTC — failover to secondary region completed
+# 02:47 UTC — root cause identified: connection pool exhaustion
+
+h3. Root cause
+The connection pool in {code}payment-worker{code} was sized for 200 concurrent requests, but the batch job spiked to 540.
+Pool exhaustion is described in [INC-2210|http://jira.internal/browse/INC-2210] and discussed by [~accountid:5b10a8c3f1e2d4a6b7c8d9e0] in the incident channel.
+
+h3. Actions taken
+* Increased pool size to 600 and added a [runbook link|http://wiki.internal/runbooks/pool-exhaustion]
+* Added alerting on pool utilization above 80% !alert.png|thumbnail!
+* Scheduled load test for next sprint — see [ITS-4501|http://jira.internal/browse/ITS-4501]
+
+h3. Follow-ups
+{quote}We should revisit capacity planning for batch windows before Q1.{quote}
+
+Owner: [~accountid:61f2e9d4a7b3c5d8e9f0a1b2]
+Review by: 2026-12-15
+Escalation: [ITSM Portal|https://itsm.example.com/portal] for related tickets</div><span class="icon-arrow"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 8h8M9 4l4 4-4 4" stroke="currentColor" fill="none"/></svg></span><div class="curr">h2. Incident summary
+
+*The payment gateway* timed out for *12 minutes* during the nightly batch.
+
+h3. Timeline
+# 02:14 UTC — first alert fired by [Prometheus|http://prometheus.internal/alerts]
+# 02:15 UTC — on-call paged via [PagerDuty|http://pagerduty.internal/incidents/P1234]
+# 02:31 UTC — failover to secondary region completed
+# 02:47 UTC — root cause identified: connection pool exhaustion
+
+h3. Root cause
+The connection pool in {code}payment-worker{code} was sized for 200 concurrent requests, but the batch job spiked to 540.
+Pool exhaustion is described in [INC-2210|http://jira.internal/browse/INC-2210] and discussed by [~accountid:5b10a8c3f1e2d4a6b7c8d9e0] in the incident channel.
+
+h3. Actions taken
+* Increased pool size to 600 and added a [runbook link|http://wiki.internal/runbooks/pool-exhaustion]
+* Added alerting on pool utilization above 80% !alert.png|thumbnail!
+* Scheduled load test for next sprint — see [ITS-4501|http://jira.internal/browse/ITS-4501]
+
+h3. Follow-ups
+{quote}We should revisit capacity planning for batch windows before Q1.{quote}
+
+Owner: [~accountid:61f2e9d4a7b3c5d8e9f0a1b2]
+Review by: 2026-12-15
+Escalation: [ITSM Portal|https://itsm.example.com/portal] for related tickets [INC-7781|https://itsm.example.com/incident/7781]</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Case 3: mid-text word swap in a medium text -->
+<section class="jdv-case">
+  <h2>Case 3 — mid-text word swap</h2>
+  <p class="jdv-caption">Expect: "quarterly" → "monthly" highlighted in place.</p>
+  <div class="history-entry">
+    <div data-testid="issue-history.ui.history-items.generic-history-item.history-item">
+      <div class="entry-meta"><span class="field">Summary</span><span class="sep">·</span><span class="actor">Max Muster</span></div>
+      <div class="old-arrow-new">
+        <div class="cell old">Run the quarterly capacity report for the payments service and attach the results to the ticket.</div><span class="arrow"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 8h8M9 4l4 4-4 4" stroke="currentColor" fill="none"/></svg></span><div class="cell new">Run the monthly capacity report for the payments service and attach the results to the ticket.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Case 4: identical old/new -->
+<section class="jdv-case">
+  <h2>Case 4 — identical old and new</h2>
+  <p class="jdv-caption">Expect: plain unchanged text, no red/green highlights.</p>
+  <div class="generic-history-item another-variant">
+    <div data-testid="issue-history.ui.history-items.generic-history-item.history-item">
+      <div class="label-row"><span class="name">Priority</span></div>
+      <div class="comparison">
+        <div>High</div><span class="glyph"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 8h8M9 4l4 4-4 4" stroke="currentColor" fill="none"/></svg></span><div>High</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Case 5: whitespace-only change -->
+<section class="jdv-case">
+  <h2>Case 5 — whitespace-only change</h2>
+  <p class="jdv-caption">Expect: a "whitespace-only change" note instead of misleading highlights.</p>
+  <div class="ak-history-item variant-b">
+    <div data-testid="issue-history.ui.history-items.generic-history-item.history-item">
+      <div class="fields"><span class="f-label">Description</span></div>
+      <div class="values">
+        <div class="v-old">Deploy checklist is complete and verified.</div><span class="v-arrow"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 8h8M9 4l4 4-4 4" stroke="currentColor" fill="none"/></svg></span><div class="v-new">Deploy checklist is complete and verified. </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Case 6: 3-child row requirement not met (only 2 children) -->
+<section class="jdv-case">
+  <h2>Case 6 — malformed row (2 children)</h2>
+  <p class="jdv-caption">Expect: untouched, no diff markup (row does not have the 3-child old/arrow/new shape).</p>
+  <div class="history-item-wrapper">
+    <div data-testid="issue-history.ui.history-items.generic-history-item.history-item" class="ak-history-item">
+      <div class="field-label"><span class="field-name">Description</span></div>
+      <div class="values-row">
+        <div class="old-value">First version of the text.</div><div class="new-value">Second version of the text.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Case 7: 3-child row but no history-item data-testid ancestor -->
+<section class="jdv-case">
+  <h2>Case 7 — right shape, wrong ancestor</h2>
+  <p class="jdv-caption">Expect: untouched, because the item lacks the history-item data-testid.</p>
+  <div class="some-other-widget">
+    <div class="widget-inner">
+      <div class="field-label"><span class="field-name">Description</span></div>
+      <div class="values-row">
+        <div class="old-value">Alpha text stays the same.</div><span class="arrow-icon"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 8h8M9 4l4 4-4 4" stroke="currentColor" fill="none"/></svg></span><div class="new-value">Alpha text stays identical.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Case 8: German UI label -->
+<section class="jdv-case">
+  <h2>Case 8 — German UI ("Beschreibung")</h2>
+  <p class="jdv-caption">Expect: processed like every other case; label language must not matter.</p>
+  <div class="generic-history-item german">
+    <div data-testid="issue-history.ui.history-items.generic-history-item.history-item">
+      <div class="change-item-header"><span class="field-label">Beschreibung</span><span class="timestamp">vor 3 Stunden</span></div>
+      <div class="item-content">
+        <div class="text-diff-row">
+          <div class="prev">Der Cache wird alle *30 Minuten* geleert.</div><span class="icon-arrow"><svg width="16" height="16" viewBox="0 0 16 16"><path d="M4 8h8M9 4l4 4-4 4" stroke="currentColor" fill="none"/></svg></span><div class="curr">Der Cache wird alle *15 Minuten* geleert.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Case 9: real Jira Cloud markup (structure and classes copied from a live tenant, text replaced).
+     The arrow cell is an empty div; Jira draws the arrow with CSS, not an svg. -->
+<section class="jdv-case">
+  <h2>Case 9 — real Jira Cloud markup, CSS-drawn arrow</h2>
+  <p class="jdv-caption">Expect: "draft" in red, "final" in green.</p>
+  <div class="_30huDKYbGa _24h04i2Njc _034jHtYbGa _3138422ADO _0adFHsdnbC _1DCdHiVa5s _2XsHFMd" data-testid="issue-history.ui.history-items.generic-history-item.history-item">
+    <div data-vc="profilecard-wrapper" class="_1EqgXlN91d _1UtDYzZpcK"><span class="_30huDKYbGa _24h04i2Njc _034jHtYbGa _1mb4UnZqHV _3iDTPbS8kF" aria-hidden="true" data-testid="user-profile-card-trigger-wrapper"><div data-testid="issue-history.ui.history-items.generic-history-item.history-item--avatar-trigger"><div class="_30huDKYbGa _24h04i2Njc _034jHtYbGa _0jFU0VnlTt _0adFHs2ADO _39xV02nlTt _3iDTPbQ"><div data-testid="issue-history.ui.history-items.generic-history-item.history-item--avatar" class="_2xIroY98eZ _497WNwYbGa _2zndICdnbC _3iDTPbvbI6 _39xV02E6Kk _1mT5xdRAKS"><span data-testid="issue-history.ui.history-items.generic-history-item.history-item--avatar--inner" class="_2uo31fVZWJ _24h04iyL8i _2OUyjtrcoi _30huDKYbGa _2xIroY98eZ _497WNwYbGa _2zndICT"><img src="" alt="" data-testid="issue-history.ui.history-items.generic-history-item.history-item--avatar--image" aria-hidden="true" class="_2O5Vij7dHp _3YEZNO7dHp"></span></div></div></div></span></div>
+    <div class="_2O5Vij7dHp _4xdlr0DIqT _39xV02MbD7">
+      <div class="css-10h0c2g">
+        <div class="css-8wpm2n">
+          <div class="css-hr6aor"><div data-vc="profilecard-wrapper" class="_1EqgXlN91d _1UtDYzZpcK"><span class="_30huDKYbGa _24h04i2Njc _034jHtYbGa _1mb4UnZqHV _3iDTPbS8kF" data-testid="user-profile-card-trigger-wrapper"><div data-testid="issue-history.ui.history-items.generic-history-item.history-item--name-trigger-c">Jane Doe</div></span></div></div>
+          <span class="_1kk5Tkf7mX">updated the Description</span>
+        </div>
+        <div class="css-a01qur"><div class="_2sNsIg7NXe css-6cu6fo"><span aria-hidden="false" tabindex="0" role="button" class="_0wOv4Q7zJH _1UtDYzZpcK _0clgaMOLYo"><span role="presentation"><time data-testid="issue-timestamp.relative-time" datetime="2026-11-18T10:38:50.179Z">5 days ago</time></span></span></div></div>
+      </div>
+      <div class="_3iDTPbQ4SZ _0hPCNLDIqT _3138422ADO _1UtDYzZpcK _3zvHkHdC7N">
+        <div class="_30huDKYbGa _24h04i2Njc _034jHtYbGa _1UtDYzy7kJ _1EqgXl715P"><span class="_4bt5LAIZbP">The release notes are in draft state.</span></div>
+        <div class="_313842dnbC _0adFHs2ADO _1DCdHidnbC _2XsHFM2ADO _0OU75rvLZJ _3Ku51IfPFO"></div>
+        <div class="_30huDKYbGa _24h04i2Njc _034jHtYbGa _1UtDYzy7kJ _1EqgXl715P"><span class="_4bt5LAIZbP">The release notes are in final state.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="../vendor/diff_match_patch_uncompressed.js"></script>
+<script src="../diff.js"></script>
+<script src="../content.js"></script>
+</body>
+</html>

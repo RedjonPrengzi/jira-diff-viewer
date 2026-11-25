@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Jira Diff Viewer",
+  "version": "1.0.0",
+  "description": "Replaces old/new history rows in the Jira History tab with highlighted inline diffs.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "jira-diff-viewer@rprengzi",
+      "strict_min_version": "109.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.atlassian.net/*"],
+      "js": [
+        "vendor/diff_match_patch_uncompressed.js",
+        "diff.js",
+        "content.js"
+      ],
+      "css": ["styles.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}
